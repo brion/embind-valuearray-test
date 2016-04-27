@@ -1,0 +1,37 @@
+# under emscripten 1.36.0 this code does not build
+# because raw pointers are not whitelisted
+
+$ make
+em++ -o sample.js --bind sample.cpp
+In file included from sample.cpp:2:
+In file included from /Users/brion/src/emsdk_portable/emscripten/master/system/include/emscripten/bind.h:10:
+In file included from /Users/brion/src/emsdk_portable/emscripten/master/system/include/emscripten/val.h:4:
+/Users/brion/src/emsdk_portable/emscripten/master/system/include/emscripten/wire.h:86:13: error: 
+      static_assert failed "Implicitly binding raw pointers is illegal. Specify
+      allow_raw_pointer<arg<?>>"
+            static_assert(!std::is_pointer<T*>::value, "Implicitly bindi...
+            ^             ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/Users/brion/src/emsdk_portable/emscripten/master/system/include/emscripten/wire.h:182:53: note: 
+      in instantiation of template class 'emscripten::internal::TypeID<Point2f
+      *>' requested here
+                static constexpr TYPEID types[] = { TypeID<Args>::get()... };
+                                                    ^
+/Users/brion/src/emsdk_portable/emscripten/master/system/include/emscripten/wire.h:205:24: note: 
+      in instantiation of member function
+      'emscripten::internal::ArgArrayGetter<emscripten::internal::TypeList<Point2f
+      *> >::get' requested here
+                    >::get();
+                       ^
+/Users/brion/src/emsdk_portable/emscripten/master/system/include/emscripten/bind.h:419:18: note: 
+      in instantiation of member function
+      'emscripten::internal::WithPolicies<>::ArgTypeList<Point2f *>::getTypes'
+      requested here
+            args.getTypes(),
+                 ^
+sample.cpp:31:2: note: in instantiation of function template specialization
+      'emscripten::function<Point2f *>' requested here
+        function("getPoint2fPtr", &getPoint2fPtr);
+        ^
+1 error generated.
+ERROR:root:compiler frontend failed to generate LLVM bitcode, halting
+make: *** [sample.js] Error 1
